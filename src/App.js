@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect, useRef } from "react";
 
-function App() {
+export default function App() {
+  const [API, setAPI] = useState({});
+  const nodeRef = useRef(null);
+
+  const startMeet = () => {
+    const domain = "meet.jit.si";
+    const room = "sample-jitsi-call-101";
+    const options = {
+      roomName: room,
+      width: "100%",
+      height: 875,
+      parentNode: nodeRef.current,
+      configOverwrite: {
+        startWithAudioMuted: true,
+        startWithVideoMuted: true,
+      },
+    };
+
+    setAPI(new window.JitsiMeetExternalAPI(domain, options));
+  };
+
+  useEffect(() => {
+    if (window.JitsiMeetExternalAPI) {
+      startMeet();
+    } else {
+      alert("JitsiMeetExternalAPI not loaded");
+    }
+  }, []);
+
+  const header = {
+    padding: "0.1em",
+    fontSize: "1.2em",
+    backgroundColor: "#246FE5",
+    color: "white",
+    fontWeight: "600",
+    fontFamily: "Segoe UI, sans serif",
+    textTransform: "uppercase",
+    textAlign: "center",
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <>
+      <header style={header}>
+        <p>Jitsi React Sample</p>
       </header>
-    </div>
+      <div ref={nodeRef} id="jitsi-iframe"></div>
+    </>
   );
 }
-
-export default App;
